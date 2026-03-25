@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#1e3a8a">
-  <title>JR Islamic Life Assistant | সম্পূর্ণ ইসলামিক সহায়ক</title>
+  <title>JR ইসলামিক লাইফ অ্যাসিস্ট্যান্ট | পূর্ণাঙ্গ সহায়ক</title>
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Leaflet CSS/JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -29,10 +31,9 @@
     .bottom-nav-item { display: inline-flex; flex-direction: column; align-items: center; margin: 0 12px; padding: 6px 0; cursor: pointer; color: rgba(255,255,255,0.8); font-size: 12px; }
     .bottom-nav-item i { font-size: 22px; margin-bottom: 4px; }
     .bottom-nav-item.active { color: var(--metallic-gold); }
-    .card { background: var(--glass-bg); backdrop-filter: blur(12px); border-radius: 28px; border: 1px solid var(--glass-border); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow); color: white; transition: transform 0.3s; }
-    .card:hover { transform: translateY(-5px); }
+    .card { background: var(--glass-bg); backdrop-filter: blur(12px); border-radius: 28px; border: 1px solid var(--glass-border); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow); color: white; }
     .section-title { font-size: 1.5rem; font-weight: 700; border-left: 5px solid var(--metallic-gold); padding-left: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-    .grid-2, .grid-4 { display: grid; gap: 20px; }
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 20px; }
     .grid-2 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
     .grid-4 { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     .prayer-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
@@ -45,20 +46,21 @@
     .flip-card .meaning { display: none; margin-top: 8px; font-size: 12px; color: var(--metallic-gold); }
     .flip-card.active .meaning { display: block; }
     .adhkar-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 20px; margin-bottom: 12px; }
-    button, .btn-like { background: var(--metallic-gold); border: none; padding: 8px 16px; border-radius: 40px; color: #1e3a8a; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    button:active { transform: scale(0.95); }
-    input, select, textarea { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 10px 16px; border-radius: 40px; color: white; width: 100%; margin-bottom: 10px; }
+    button { background: var(--metallic-gold); border: none; padding: 8px 16px; border-radius: 40px; color: #1e3a8a; font-weight: bold; cursor: pointer; transition: 0.2s; margin: 4px; }
+    button:hover { opacity: 0.9; transform: scale(0.98); }
+    input, select { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 10px 16px; border-radius: 40px; color: white; width: 100%; }
     #map { height: 400px; border-radius: 20px; margin-top: 12px; background: #1e3a8a; }
     .visualizer { display: flex; justify-content: center; gap: 6px; margin-top: 15px; }
     .visualizer-bar { width: 8px; height: 30px; background: var(--metallic-gold); border-radius: 4px; transition: height 0.1s; }
-    .install-btn, .dev-btn { background: linear-gradient(45deg, var(--metallic-gold), #f5b042); color: #1e3a8a; font-weight: bold; border: none; padding: 12px 20px; border-radius: 40px; cursor: pointer; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; }
+    .profile-avatar { width: 80px; height: 80px; background: var(--metallic-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; }
+    .refresh-btn { background: #2c5282; color: white; border: 1px solid gold; }
     @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; padding: 16px 12px 90px; } .bottom-nav { display: flex; } }
   </style>
 </head>
 <body>
 <div class="app-container">
   <div class="sidebar">
-    <div class="logo"><i class="fas fa-mosque"></i> JR Islamic<br>Life Assistant</div>
+    <div class="logo"><i class="fas fa-mosque"></i> JR ইসলামিক<br>লাইফ অ্যাসিস্ট্যান্ট</div>
     <div class="sidebar-nav" id="sidebarNav">
       <div class="nav-item" data-section="dashboard"><i class="fas fa-home"></i> ড্যাশবোর্ড</div>
       <div class="nav-item" data-section="prayer"><i class="fas fa-clock"></i> নামাজের সময়</div>
@@ -71,280 +73,104 @@
       <div class="nav-item" data-section="health"><i class="fas fa-leaf"></i> সুন্নাহ স্বাস্থ্য</div>
       <div class="nav-item" data-section="quiz"><i class="fas fa-question-circle"></i> কুইজ</div>
       <div class="nav-item" data-section="audio"><i class="fas fa-headphones"></i> অডিও</div>
-      <div class="nav-item" data-section="captions"><i class="fas fa-quote-right"></i> ইসলামিক ক্যাপশন</div>
+      <div class="nav-item" data-section="caption"><i class="fas fa-share-alt"></i> ইসলামিক ক্যাপশন</div>
       <div class="nav-item" data-section="settings"><i class="fas fa-cog"></i> সেটিংস</div>
     </div>
   </div>
 
   <div class="main-content">
-    <!-- Dashboard -->
-    <div id="dashboard" class="section active-section">
-      <div class="card"><div class="section-title"><i class="fas fa-chart-line"></i> আপনার ইসলামিক ড্যাশবোর্ড</div>
-      <div id="dashboardStats" class="grid-2"></div>
-      <button class="dev-btn" id="contactDevBtn"><i class="fas fa-phone-alt"></i> ডেভেলপার: Md Jakariya Hasan | যোগাযোগ</button>
-      <button class="install-btn" id="manualInstallBtn"><i class="fas fa-download"></i> অ্যাপ ইনস্টল করুন (PWA)</button>
-    </div></div>
-
-    <!-- Prayer Times -->
-    <div id="prayer" class="section"><div class="card"><div class="section-title"><i class="fas fa-clock"></i> নামাজের সময়সূচি</div>
-      <div class="countdown-container"><div id="nextPrayerLabel">পরবর্তী নামাজ</div><div class="countdown-digits" id="countdownDigits">--:--:--</div><div class="progress-bar"><div class="progress-fill" id="prayerProgress"></div></div></div>
-      <div id="prayerTimesList"></div><div id="makruhAlert" class="makruh-alert" style="display:none;"></div>
-      <div style="margin-top:15px;"><select id="methodSelect"><option value="1">MWL (মক্কা)</option><option value="2">ISNA</option><option value="3">Egyptian</option></select></div>
-    </div></div>
-
-    <!-- Mosque Finder -->
+    <!-- Dashboard (unchanged but updated) -->
+    <div id="dashboard" class="section active-section"><div class="card"><div class="section-title"><i class="fas fa-chart-line"></i> আপনার ইসলামিক ড্যাশবোর্ড</div><div id="dashboardStats" class="grid-2"></div><button class="dev-btn" id="contactDevBtn"><i class="fas fa-phone-alt"></i> ডেভেলপার: মো: জাকারিয়া হাসান | যোগাযোগ</button><button class="install-btn" id="manualInstallBtn"><i class="fas fa-download"></i> অ্যাপ ইনস্টল করুন (PWA)</button></div></div>
+    <div id="prayer" class="section"><div class="card"><div class="section-title"><i class="fas fa-clock"></i> নামাজের সময়সূচি</div><div class="countdown-container"><div id="nextPrayerLabel">পরবর্তী নামাজ</div><div class="countdown-digits" id="countdownDigits">--:--:--</div><div class="progress-bar"><div class="progress-fill" id="prayerProgress"></div></div></div><div id="prayerTimesList"></div><div id="makruhAlert" class="makruh-alert" style="display:none;"></div><div style="margin-top:15px;"><select id="methodSelect"><option value="1">MWL (মক্কা)</option><option value="2">ISNA</option><option value="3">Egyptian</option></select></div></div></div>
     <div id="mosque" class="section"><div class="card"><div class="section-title"><i class="fas fa-map-marker-alt"></i> নিকটস্থ মসজিদ</div><button id="locateBtn"><i class="fas fa-location-dot"></i> আমার অবস্থান</button><div id="map"></div><div id="mosqueStatus"></div></div></div>
-
-    <!-- Zakat -->
-    <div id="zakat" class="section"><div class="card"><div class="section-title"><i class="fas fa-calculator"></i> যাকাত ক্যালকুলেটর</div>
-      <div class="grid-2"><div><label>স্বর্ণ (গ্রাম)</label><input type="number" id="goldG" value="0"></div><div><label>রূপা (গ্রাম)</label><input type="number" id="silverG" value="0"></div><div><label>নগদ টাকা</label><input type="number" id="cashZ" value="0"></div><div><label>ব্যবসায়িক সম্পদ</label><input type="number" id="businessZ" value="0"></div><div><label>ঋণ/দায়</label><input type="number" id="liabilityZ" value="0"></div></div>
-      <button id="calcZakatBtn">গণনা করুন</button><div id="zakatResult" style="margin-top:15px;"></div>
-    </div></div>
-
-    <!-- Tasbih (with custom addition) -->
-    <div id="tasbih" class="section"><div class="card"><div class="section-title"><i class="fas fa-hands-praying"></i> ডিজিটাল তাসবিহ</div>
-      <div id="tasbihList"></div>
-      <div style="margin-top:20px;"><input type="text" id="customTasbihName" placeholder="নতুন তাসবিহের নাম (যেমন: সুবহানাল্লাহ)" style="width:70%; display:inline-block;"><button id="addCustomTasbih" style="width:28%;">যোগ করুন</button></div>
-    </div></div>
-
-    <!-- 99 Names (Full list) -->
-    <div id="names" class="section"><div class="card"><div class="section-title"><i class="fas fa-star-of-life"></i> আল্লাহর ৯৯ নাম</div><div id="namesGrid" class="grid-4"></div></div></div>
-
-    <!-- Prophets (Full 25) -->
+    <div id="zakat" class="section"><div class="card"><div class="section-title"><i class="fas fa-calculator"></i> যাকাত ক্যালকুলেটর</div><div class="grid-2"><div><label>স্বর্ণ (গ্রাম)</label><input type="number" id="goldG" value="0"></div><div><label>রূপা (গ্রাম)</label><input type="number" id="silverG" value="0"></div><div><label>নগদ টাকা</label><input type="number" id="cashZ" value="0"></div><div><label>ব্যবসায়িক সম্পদ</label><input type="number" id="businessZ" value="0"></div><div><label>ঋণ/দায়</label><input type="number" id="liabilityZ" value="0"></div></div><button id="calcZakatBtn">গণনা করুন</button><div id="zakatResult" style="margin-top:15px;"></div></div></div>
+    
+    <!-- TASBIH with custom adder -->
+    <div id="tasbih" class="section"><div class="card"><div class="section-title"><i class="fas fa-hands-praying"></i> ডিজিটাল তাসবিহ + কাস্টম যুক্ত করুন</div><div id="tasbihList"></div><div style="margin-top:20px; background:rgba(0,0,0,0.3); padding:15px; border-radius:28px;"><h4><i class="fas fa-plus-circle"></i> নতুন তাসবিহ যোগ করুন</h4><input type="text" id="customTasbihName" placeholder="নাম (উদা: লা ইলাহা ইল্লাল্লাহ)" style="margin-bottom:8px;"><input type="number" id="customTasbihTarget" placeholder="লক্ষ্য সংখ্যা" value="33"><button id="addCustomTasbihBtn">যোগ করুন</button></div></div></div>
+    
+    <!-- 99 Names FULL -->
+    <div id="names" class="section"><div class="card"><div class="section-title"><i class="fas fa-star-of-life"></i> আল্লাহর ৯৯ নাম (পূর্ণ)</div><div id="namesGrid" class="grid-4"></div></div></div>
+    
     <div id="prophets" class="section"><div class="card"><div class="section-title"><i class="fas fa-user-graduate"></i> ২৫ জন নবীর কাহিনী</div><div id="prophetsList" class="grid-2"></div></div></div>
-
-    <!-- Duas (API + Local) -->
-    <div id="dua" class="section"><div class="card"><div class="section-title"><i class="fas fa-book"></i> হিসনুল মুসলিম - দৈনিক দোয়া</div>
-      <div style="display:flex; gap:10px; margin-bottom:15px;"><input type="text" id="duaSearch" placeholder="দোয়া অনুসন্ধান..."><button id="refreshDuaBtn"><i class="fas fa-sync-alt"></i> রিফ্রেশ</button></div>
-      <div id="duaList"></div>
-    </div></div>
-
-    <!-- Health Tips (API) -->
-    <div id="health" class="section"><div class="card"><div class="section-title"><i class="fas fa-leaf"></i> সুন্নাহ স্বাস্থ্য টিপস</div>
-      <div style="display:flex; gap:10px; margin-bottom:15px;"><button id="refreshHealthBtn"><i class="fas fa-sync-alt"></i> নতুন টিপস</button></div>
-      <div id="healthTips" class="grid-2"></div>
-    </div></div>
-
-    <!-- Quiz (API + Next) -->
-    <div id="quiz" class="section"><div class="card"><div class="section-title"><i class="fas fa-question-circle"></i> ইসলামিক কুইজ</div>
-      <div id="quizContainer"></div>
-      <div style="display:flex; gap:10px; margin-top:15px;"><button id="nextQuizBtn">পরবর্তী প্রশ্ন</button><button id="submitQuizBtn">উত্তর জমা দিন</button></div>
-      <div id="quizResult"></div>
-    </div></div>
-
-    <!-- Audio (with API reciter list) -->
-    <div id="audio" class="section"><div class="card"><div class="section-title"><i class="fas fa-headphones"></i> কুরআন অডিও স্ট্রিম</div>
-      <select id="reciterSelect"><option value="https://stream.zeno.fm/cf3k6rbyzqzuv">লাইভ কুরআন রেডিও</option></select>
-      <audio controls id="quranAudio" style="width:100%; margin-top:10px;"></audio>
-      <div class="visualizer" id="visualizer"></div>
-    </div></div>
-
-    <!-- Islamic Captions (API, copy/share) -->
-    <div id="captions" class="section"><div class="card"><div class="section-title"><i class="fas fa-quote-right"></i> ইসলামিক ক্যাপশন</div>
-      <div id="captionCard" style="background: rgba(0,0,0,0.3); padding:20px; border-radius:28px; text-align:center; margin-bottom:15px;">
-        <div id="captionText">আল্লাহর রহমত থেকে নিরাশ হয়ো না। নিশ্চয়ই আল্লাহ সব গুনাহ মাফ করেন।</div>
-        <div id="captionRef">— সূরা যুমার, ৫৩</div>
-      </div>
-      <div style="display:flex; gap:10px;"><button id="refreshCaptionBtn"><i class="fas fa-sync-alt"></i> নতুন ক্যাপশন</button><button id="copyCaptionBtn"><i class="fas fa-copy"></i> কপি</button><button id="shareCaptionBtn"><i class="fab fa-whatsapp"></i> শেয়ার</button></div>
-    </div></div>
-
-    <!-- Settings (Enhanced Profile) -->
-    <div id="settings" class="section"><div class="card"><div class="section-title"><i class="fas fa-cog"></i> প্রোফাইল ও সেটিংস</div>
-      <div style="text-align:center; margin-bottom:20px;"><div style="width:100px; height:100px; background: var(--metallic-gold); border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user-circle" style="font-size:60px; color:#1e3a8a;"></i></div></div>
-      <div class="grid-2">
-        <div><label>আপনার নাম</label><input type="text" id="userName" placeholder="নাম"></div>
-        <div><label>শহর</label><input type="text" id="userCity" placeholder="ঢাকা"></div>
-        <div><label>ফজর অফসেট (মিনিট)</label><input type="number" id="fajrOffset" value="0"></div>
-        <div><label>নামাজের পদ্ধতি</label><select id="settingsMethod"><option value="1">MWL</option><option value="2">ISNA</option></select></div>
-        <div><label>থিম</label><select id="themeSelect"><option value="light">হালকা</option><option value="dark">গাঢ়</option></select></div>
-        <div><label>নোটিফিকেশন</label><select id="notifToggle"><option value="on">চালু</option><option value="off">বন্ধ</option></select></div>
-      </div>
-      <button id="saveSettingsBtn">সেভ করুন</button>
-    </div></div>
+    
+    <!-- DUA + API + Refresh -->
+    <div id="dua" class="section"><div class="card"><div class="section-title"><i class="fas fa-book"></i> হিসনুল মুসলিম + এপিআই দোয়া</div><input type="text" id="duaSearch" placeholder="দোয়া অনুসন্ধান..."><div style="display:flex; gap:10px; margin:10px 0;"><button id="refreshDuaApiBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> এপিআই থেকে নতুন দোয়া আনুন</button></div><div id="duaList" style="margin-top:15px;"></div></div></div>
+    
+    <!-- HEALTH TIPS + API -->
+    <div id="health" class="section"><div class="card"><div class="section-title"><i class="fas fa-leaf"></i> সুন্নাহ স্বাস্থ্য টিপস + এপিআই</div><button id="refreshHealthApiBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> নতুন সুন্নাহ টিপস আনুন (হাদিস)</button><div id="healthTips" class="grid-2"></div></div></div>
+    
+    <!-- QUIZ + API sequential -->
+    <div id="quiz" class="section"><div class="card"><div class="section-title"><i class="fas fa-question-circle"></i> ইসলামিক কুইজ (এপিআই + সিকোয়েন্সিয়াল)</div><select id="quizLevel"><option value="beginner">বিগিনার</option><option value="intermediate">মাঝারি</option><option value="advanced">উন্নত</option></select><div style="margin:10px 0;"><button id="apiQuizBtn" class="refresh-btn"><i class="fas fa-globe"></i> এপিআই থেকে নতুন প্রশ্ন আনুন</button><button id="nextLocalQuizBtn">পরবর্তী স্থানীয় প্রশ্ন</button></div><div id="quizContainer"></div><button id="submitQuizBtn">উত্তর জমা দিন</button><div id="quizResult"></div></div></div>
+    
+    <!-- AUDIO + API Reciters -->
+    <div id="audio" class="section"><div class="card"><div class="section-title"><i class="fas fa-headphones"></i> কুরআন অডিও স্ট্রিম + রিসাইটার এপিআই</div><select id="reciterSelect"><option value="https://stream.zeno.fm/cf3k6rbyzqzuv">লাইভ কুরআন রেডিও</option></select><button id="fetchRecitersApiBtn" class="refresh-btn"><i class="fas fa-download"></i> রিসাইটার তালিকা আপডেট করুন</button><audio controls id="quranAudio" style="width:100%; margin-top:10px;"></audio><div class="visualizer" id="visualizer"></div></div></div>
+    
+    <!-- ISLAMIC CAPTION (replaces share ayah) -->
+    <div id="caption" class="section"><div class="card"><div class="section-title"><i class="fas fa-share-alt"></i> ইসলামিক ক্যাপশন (এপিআই)</div><button id="refreshCaptionApiBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> নতুন ক্যাপশন আনুন</button><div id="captionCard" style="background: rgba(0,0,0,0.3); padding:20px; border-radius:28px; text-align:center; margin-top:15px;"><div id="captionText">আল্লাহর রহমত সবকিছুকে পরিবেষ্টন করে রেখেছে</div><div id="captionRef">- কুরআন থেকে উক্তি</div></div><div style="display:flex; gap:10px; margin-top:15px;"><button id="copyCaptionBtn"><i class="fas fa-copy"></i> কপি করুন</button><button id="shareCaptionBtn"><i class="fas fa-share-alt"></i> শেয়ার করুন</button></div></div></div>
+    
+    <!-- SETTINGS enhanced profile style -->
+    <div id="settings" class="section"><div class="card"><div class="section-title"><i class="fas fa-cog"></i> প্রোফাইল ও সেটিংস</div><div class="profile-avatar"><i class="fas fa-user"></i></div><div><label>আপনার নাম</label><input type="text" id="userName" placeholder="আপনার নাম"></div><div><label>শহর (নামাজের জন্য)</label><input type="text" id="userCity" placeholder="ঢাকা"></div><div><label>ফজর অফসেট (মিনিট)</label><input type="number" id="fajrOffset" value="0"></div><div><label>নোটিফিকেশন চান?</label><select id="notifyPref"><option value="yes">হ্যাঁ</option><option value="no">না</option></select></div><div><label>থিম (প্রিফিক্স)</label><select id="themePref"><option value="dark">ডার্ক</option><option value="light">লাইট</option></select></div><button id="saveSettingsBtn" style="width:100%; margin-top:15px;">সেভ করুন</button></div></div>
   </div>
 
-  <!-- Mobile Bottom Nav -->
-  <div class="bottom-nav" id="bottomNav">
-    <div class="bottom-nav-item" data-section="dashboard"><i class="fas fa-home"></i><span>হোম</span></div>
-    <div class="bottom-nav-item" data-section="prayer"><i class="fas fa-clock"></i><span>নামাজ</span></div>
-    <div class="bottom-nav-item" data-section="mosque"><i class="fas fa-map"></i><span>মসজিদ</span></div>
-    <div class="bottom-nav-item" data-section="zakat"><i class="fas fa-calculator"></i><span>যাকাত</span></div>
-    <div class="bottom-nav-item" data-section="tasbih"><i class="fas fa-pray"></i><span>তাসবিহ</span></div>
-    <div class="bottom-nav-item" data-section="names"><i class="fas fa-star"></i><span>৯৯ নাম</span></div>
-    <div class="bottom-nav-item" data-section="prophets"><i class="fas fa-user"></i><span>নবীগণ</span></div>
-    <div class="bottom-nav-item" data-section="dua"><i class="fas fa-book"></i><span>দোয়া</span></div>
-    <div class="bottom-nav-item" data-section="health"><i class="fas fa-heartbeat"></i><span>স্বাস্থ্য</span></div>
-    <div class="bottom-nav-item" data-section="quiz"><i class="fas fa-brain"></i><span>কুইজ</span></div>
-    <div class="bottom-nav-item" data-section="audio"><i class="fas fa-headphones"></i><span>অডিও</span></div>
-    <div class="bottom-nav-item" data-section="captions"><i class="fas fa-quote-right"></i><span>ক্যাপশন</span></div>
-    <div class="bottom-nav-item" data-section="settings"><i class="fas fa-cog"></i><span>সেটিংস</span></div>
-  </div>
+  <div class="bottom-nav" id="bottomNav"></div>
 </div>
 
 <script>
-  // ----------------------------- FULL DATABASES (99 NAMES COMPLETE) -----------------------------
-  // Complete 99 Names (Arabic, Bengali, Meaning, Benefit)
+  // ----------------------------- FULL 99 NAMES (complete) -----------------------------
   const allahNames = [
-    { ar: "الرَّحْمَنُ", bn: "আর-রাহমান", meaning: "পরম দয়াময়", benefit: "দয়ালু হওয়ার তাওফিক" },
-    { ar: "الرَّحِيمُ", bn: "আর-রাহীম", meaning: "অতি দয়ালু", benefit: "ক্ষমা লাভ" },
-    { ar: "الْمَلِكُ", bn: "আল-মালিক", meaning: "সর্বভৌম অধিপতি", benefit: "সম্মান লাভ" },
-    { ar: "الْقُدُّوسُ", bn: "আল-কুদ্দুস", meaning: "পবিত্র", benefit: "পবিত্রতা লাভ" },
-    { ar: "السَّلَامُ", bn: "আস-সালাম", meaning: "শান্তিদাতা", benefit: "মানসিক শান্তি" },
-    { ar: "الْمُؤْمِنُ", bn: "আল-মু'মিন", meaning: "নির্ভয়দাতা", benefit: "ঈমান মজবুত হয়" },
-    { ar: "الْمُهَيْمِنُ", bn: "আল-মুহাইমিন", meaning: "রক্ষক", benefit: "সুরক্ষা লাভ" },
-    { ar: "الْعَزِيزُ", bn: "আল-আযীয", meaning: "পরাক্রমশালী", benefit: "সম্মান অর্জন" },
-    { ar: "الْجَبَّارُ", bn: "আল-জাব্বার", meaning: "পরাক্রান্ত", benefit: "শক্তি লাভ" },
-    { ar: "الْمُتَكَبِّرُ", bn: "আল-মুতাকাব্বির", meaning: "মহিমান্বিত", benefit: "অহংকারমুক্তি" }
+    { ar: "الرَّحْمَنُ", bn: "আর-রাহমান", meaning: "পরম দয়াময়", benefit: "দয়া লাভের মাধ্যম" },{ ar: "الرَّحِيمُ", bn: "আর-রাহীম", meaning: "অতি দয়ালু", benefit: "ক্ষমাপ্রাপ্তি" },{ ar: "الْمَلِكُ", bn: "আল-মালিক", meaning: "সর্বভৌম অধিপতি", benefit: "সম্মান লাভ" },{ ar: "الْقُدُّوسُ", bn: "আল-কুদ্দুস", meaning: "পবিত্র", benefit: "পবিত্রতা" },{ ar: "السَّلَامُ", bn: "আস-সালাম", meaning: "শান্তিদাতা", benefit: "মানসিক প্রশান্তি" },{ ar: "الْمُؤْمِنُ", bn: "আল-মু'মিন", meaning: "নিরাপত্তাদাতা", benefit: "ঈমান বৃদ্ধি" },{ ar: "الْمُهَيْمِنُ", bn: "আল-মুহাইমিন", meaning: "রক্ষক", benefit: "আল্লাহর সুরক্ষা" },{ ar: "الْعَزِيزُ", bn: "আল-আযীয", meaning: "পরাক্রমশালী", benefit: "সম্মান ও ইজ্জত" },{ ar: "الْجَبَّارُ", bn: "আল-জাব্বার", meaning: "শক্তিশালী", benefit: "অভিভাবকত্ব" },{ ar: "الْمُتَكَبِّرُ", bn: "আল-মুতাকাব্বির", meaning: "মহিমাময়", benefit: "অহংকার মুক্তি" },{ ar: "الْخَالِقُ", bn: "আল-খালিক", meaning: "সৃষ্টিকর্তা", benefit: "সৃজনশীলতা" },{ ar: "الْبَارِئُ", bn: "আল-বারিউ", meaning: "শৃঙ্খলাকারী", benefit: "রোগমুক্তি" },{ ar: "الْمُصَوِّرُ", bn: "আল-মুসাওয়ির", meaning: "রূপদানকারী", benefit: "সুন্দর চেহারা" },{ ar: "الْغَفَّارُ", bn: "আল-গাফ্ফার", meaning: "ক্ষমাশীল", benefit: "গুনাহ মাফ" },{ ar: "الْقَهَّارُ", bn: "আল-কাহহার", meaning: "প্রভুত্বকারী", benefit: "শত্রুর বিরুদ্ধে শক্তি" },{ ar: "الْوَهَّابُ", bn: "আল-ওয়াহহাব", meaning: "দানশীল", benefit: "অঢেল রিজিক" },{ ar: "الرَّزَّاقُ", bn: "আর-রাযযাক", meaning: "রিজিকদাতা", benefit: "আর্থিক সমৃদ্ধি" },{ ar: "الْفَتَّاحُ", bn: "আল-ফাত্তাহ", meaning: "বিজয়দাতা", benefit: "সাফল্য" },{ ar: "الْعَلِيمُ", bn: "আল-আলীম", meaning: "সর্বজ্ঞ", benefit: "জ্ঞান বৃদ্ধি" },{ ar: "الْقَابِضُ", bn: "আল-কাবিদ", meaning: "সংকুচিতকারী", benefit: "অভাব থেকে বাঁচে" },{ ar: "الْبَاسِطُ", bn: "আল-বাসিত", meaning: "প্রসারিতকারী", benefit: "উদারতা" },{ ar: "الْخَافِضُ", bn: "আল-খাফিদ", meaning: "অবনতকারী", benefit: "অপমান থেকে রক্ষা" },{ ar: "الرَّافِعُ", bn: "আর-রাফি", meaning: "উন্নতকারী", benefit: "সম্মান বৃদ্ধি" },{ ar: "الْمُعِزُّ", bn: "আল-মুইজ্জ", meaning: "সম্মানদাতা", benefit: "মর্যাদা লাভ" },{ ar: "الْمُذِلُّ", bn: "আল-মুযিল", meaning: "অপমানকারী", benefit: "অহংকার দূর হয়" },{ ar: "السَّمِيعُ", bn: "আস-সামী", meaning: "সর্বশ্রোতা", benefit: "দোয়া কবুল" },{ ar: "الْبَصِيرُ", bn: "আল-বাসীর", meaning: "সর্বদ্রষ্টা", benefit: "সঠিক পথ" },{ ar: "الْحَكَمُ", bn: "আল-হাকাম", meaning: "ন্যায়বিচারক", benefit: "বিচার প্রাপ্তি" },{ ar: "الْعَدْلُ", bn: "আল-আদল", meaning: "ন্যায়পরায়ণ", benefit: "ন্যায় প্রতিষ্ঠা" },{ ar: "اللَّطِيفُ", bn: "আল-লতিফ", meaning: "সূক্ষ্মদর্শী", benefit: "সুন্দর ব্যবহার" },{ ar: "الْخَبِيرُ", bn: "আল-খাবির", meaning: "জ্ঞানী", benefit: "অন্তরের জ্ঞান" },{ ar: "الْحَلِيمُ", bn: "আল-হালীম", meaning: "ধৈর্যশীল", benefit: "ধৈর্য লাভ" },{ ar: "الْعَظِيمُ", bn: "আল-আযীম", meaning: "মহান", benefit: "মহত্ব অর্জন" },{ ar: "الْغَفُورُ", bn: "আল-গাফুর", meaning: "ক্ষমাপরায়ণ", benefit: "ক্ষমা লাভ" },{ ar: "الشَّكُورُ", bn: "আশ-শাকুর", meaning: "গুণগ্রাহী", benefit: "কৃতজ্ঞতা" },{ ar: "الْعَلِيُّ", bn: "আল-আলী", meaning: "উচ্চ", benefit: "মর্যাদা" },{ ar: "الْكَبِيرُ", bn: "আল-কাবীর", meaning: "মহান", benefit: "বিনয়" },{ ar: "الْحَفِيظُ", bn: "আল-হাফীয", meaning: "সংরক্ষক", benefit: "হেফাজত" },{ ar: "الْمُقِيتُ", bn: "আল-মুকীত", meaning: "ক্ষমতাধর", benefit: "রিজিকের ব্যাপ্তি" },{ ar: "الْحَسِيبُ", bn: "আল-হাসীব", meaning: "হিসাব গ্রহীতা", benefit: "হিসাব সহজ হয়" },{ ar: "الْجَلِيلُ", bn: "আল-জালীল", meaning: "মর্যাদাময়", benefit: "ইজ্জত" },{ ar: "الْكَرِيمُ", bn: "আল-করীম", meaning: "সম্মানিত", benefit: "সম্মান অর্জন" },{ ar: "الرَّقِيبُ", bn: "আর-রাকীব", meaning: "তত্ত্বাবধায়ক", benefit: "পাপ থেকে বাঁচে" },{ ar: "الْمُجِيبُ", bn: "আল-মুজীব", meaning: "দোয়া কবুলকারী", benefit: "দোয়া কবুল" },{ ar: "الْوَاسِعُ", bn: "আল-ওয়াসি", meaning: "প্রশস্ত", benefit: "অশেষ রহমত" },{ ar: "الْحَكِيمُ", bn: "আল-হাকীম", meaning: "প্রজ্ঞাময়", benefit: "প্রজ্ঞা লাভ" },{ ar: "الْوَدُودُ", bn: "আল-ওয়াদুদ", meaning: "স্নেহময়", benefit: "ভালোবাসা" },{ ar: "الْمَجِيدُ", bn: "আল-মাজীদ", meaning: "সম্মানিত", benefit: "যশ" },{ ar: "الْبَاعِثُ", bn: "আল-বাইস", meaning: "পুনরুত্থানকারী", benefit: "আখিরাতের চিন্তা" },{ ar: "الشَّهِيدُ", bn: "আশ-শাহীদ", meaning: "সাক্ষী", benefit: "সত্য সাক্ষ্য" },{ ar: "الْحَقُّ", bn: "আল-হক্ক", meaning: "সত্য", benefit: "সত্যের পথ" },{ ar: "الْوَكِيلُ", bn: "আল-ওয়াকীল", meaning: "ভরসাস্থল", benefit: "ভরসা লাভ" },{ ar: "الْقَوِيُّ", bn: "আল-কাভী", meaning: "শক্তিশালী", benefit: "শক্তি" },{ ar: "الْمَتِينُ", bn: "আল-মাতীন", meaning: "সুদৃঢ়", benefit: "দৃঢ়তা" },{ ar: "الْوَلِيُّ", bn: "আল-ওয়ালী", meaning: "অভিভাবক", benefit: "সুরক্ষা" },{ ar: "الْحَمِيدُ", bn: "আল-হামীদ", meaning: "প্রশংসিত", benefit: "প্রশংসা" },{ ar: "الْمُحْصِي", bn: "আল-মুহসী", meaning: "গণনাকারী", benefit: "হিসাব সহজ" },{ ar: "الْمُبْدِئُ", bn: "আল-মুবদি", meaning: "সৃষ্টিকর্তা", benefit: "নতুন সৃষ্টি" },{ ar: "الْمُعِيدُ", bn: "আল-মুঈদ", meaning: "পুনরায় ফিরানো", benefit: "পুনরুত্থান" },{ ar: "الْمُحْيِي", bn: "আল-মুহয়ী", meaning: "জীবনদাতা", benefit: "জীবন-জীবিকা" },{ ar: "الْمُمِيتُ", bn: "আল-মুমীত", meaning: "মৃত্যুদাতা", benefit: "মৃত্যু স্মরণ" },{ ar: "الْحَيُّ", bn: "আল-হাইয়্যু", meaning: "চিরঞ্জীব", benefit: "অমরত্বের চেতনা" },{ ar: "الْقَيُّومُ", bn: "আল-কাইয়ুম", meaning: "ধারক", benefit: "সহায়তা" },{ ar: "الْوَاجِدُ", bn: "আল-ওয়াজিদ", meaning: "অমূল্য", benefit: "অভাব দূর" },{ ar: "الْمَاجِدُ", bn: "আল-মাজিদ", meaning: "মহিমান্বিত", benefit: "মহত্ত্ব" },{ ar: "الْوَاحِدُ", bn: "আল-ওয়াহিদ", meaning: "এক", benefit: "একত্ববাদ" },{ ar: "الْأَحَدُ", bn: "আল-আহাদ", meaning: "অদ্বিতীয়", benefit: "তাওহীদ" },{ ar: "الصَّمَدُ", bn: "আস-সামাদ", meaning: "অমুখাপেক্ষী", benefit: "পরমুখাপেক্ষিতা দূর" },{ ar: "الْقَادِرُ", bn: "আল-কাদির", meaning: "ক্ষমতাবান", benefit: "ক্ষমতা লাভ" },{ ar: "الْمُقْتَدِرُ", bn: "আল-মুকতাদির", meaning: "শক্তিধর", benefit: "সামর্থ্য" },{ ar: "الْمُقَدِّمُ", bn: "আল-মুকাদ্দিম", meaning: "অগ্রসরকারী", benefit: "অগ্রগতি" },{ ar: "الْمُؤَخِّرُ", bn: "আল-মুয়াখখির", meaning: "পশ্চাতে রাখা", benefit: "ধৈর্য" },{ ar: "الْأَوَّلُ", bn: "আল-আউয়াল", meaning: "প্রথম", benefit: "আদি থেকে স্মরণ" },{ ar: "الْآخِرُ", bn: "আল-আখির", meaning: "শেষ", benefit: "পরিণামের চিন্তা" },{ ar: "الظَّاهِرُ", bn: "আজ-জাহির", meaning: "প্রকাশ্য", benefit: "আল্লাহর নিদর্শন" },{ ar: "الْبَاطِنُ", bn: "আল-বাতিন", meaning: "অপ্রকাশ্য", benefit: "গোপন রহমত" },{ ar: "الْوَالِي", bn: "আল-ওয়ালী", meaning: "শাসক", benefit: "নেতৃত্ব" },{ ar: "الْمُتَعَالِي", bn: "আল-মুতাআলি", meaning: "সর্বোচ্চ", benefit: "উচ্চাশয়" },{ ar: "الْبَرُّ", bn: "আল-বারর", meaning: "সদয়", benefit: "কল্যাণ" },{ ar: "التَّوَّابُ", bn: "আত-তাওয়াব", meaning: "তওবা কবুলকারী", benefit: "তওবার তাওফিক" },{ ar: "الْمُنْتَقِمُ", bn: "আল-মুন্তাকিম", meaning: "প্রতিশোধ গ্রহীতা", benefit: "অন্যায় থেকে বাঁচে" },{ ar: "الْعَفُوُّ", bn: "আল-আফুও", meaning: "মার্জনাকারী", benefit: "মাফ পাওয়া" },{ ar: "الرَّؤُوفُ", bn: "আর-রউফ", meaning: "স্নেহশীল", benefit: "স্নেহ প্রাপ্তি" },{ ar: "مَالِكُ الْمُلْكِ", bn: "মালিকুল মুল্ক", meaning: "রাজত্বের মালিক", benefit: "রিজিকের বারকাত" },{ ar: "ذُو الْجَلَالِ وَالْإِكْرَامِ", bn: "যুল জালালি ওয়াল ইকরাম", meaning: "মহিমা ও সম্মানের অধিকারী", benefit: "সম্মান" },{ ar: "الْمُقْسِطُ", bn: "আল-মুকসিত", meaning: "ন্যায়পরায়ণ", benefit: "ন্যায় বিচার" },{ ar: "الْجَامِعُ", bn: "আল-জামি", meaning: "একত্রকারী", benefit: "মিলন" },{ ar: "الْغَنِيُّ", bn: "আল-গণী", meaning: "অমুখাপেক্ষী", benefit: "অভাবমুক্তি" },{ ar: "الْمُغْنِي", bn: "আল-মুগনি", meaning: "সমৃদ্ধিদাতা", benefit: "সমৃদ্ধি" },{ ar: "الْمَانِعُ", bn: "আল-মানি", meaning: "বাধাদাতা", benefit: "অমঙ্গল থেকে রক্ষা" },{ ar: "الضَّارُ", bn: "আজ-যারর", meaning: "ক্ষতিকারী", benefit: "ক্ষতি থেকে বাঁচা" },{ ar: "النَّافِعُ", bn: "আন-নাফি", meaning: "উপকারী", benefit: "উপকার লাভ" },{ ar: "النُّورُ", bn: "আন-নূর", meaning: "আলো", benefit: "হেদায়েত" },{ ar: "الْهَادِي", bn: "আল-হাদী", meaning: "পথপ্রদর্শক", benefit: "সঠিক পথ" },{ ar: "الْبَدِيعُ", bn: "আল-বাদী", meaning: "অদ্বিতীয় স্রষ্টা", benefit: "সুন্দর সৃষ্টি" },{ ar: "الْبَاقِي", bn: "আল-বাকী", meaning: "চিরস্থায়ী", benefit: "অমর স্মৃতি" },{ ar: "الْوَارِثُ", bn: "আল-ওয়ারিস", meaning: "উত্তরাধিকারী", benefit: "উত্তরাধিকার" },{ ar: "الرَّشِيدُ", bn: "আর-রশীদ", meaning: "সঠিক পথদর্শক", benefit: "সুস্থ সিদ্ধান্ত" },{ ar: "الصَّبُورُ", bn: "আস-সাবুর", meaning: "ধৈর্যশীল", benefit: "ধৈর্য" }
   ];
-  // Remaining 89 names (for full 99, we'll add them as placeholders but you can replace with actual)
-  for (let i = 11; i <= 99; i++) {
-    allahNames.push({ ar: `اسم ${i}`, bn: `নাম ${i}`, meaning: "সুন্দর নাম", benefit: "কল্যাণ লাভ" });
-  }
-
-  // 25 Prophets (Full)
-  const prophets = [
-    { name: "আদম (আঃ)", summary: "আল্লাহর প্রথম মানুষ ও নবী। পৃথিবীতে প্রতিনিধি। তওবার শিক্ষা দিয়েছেন।" },
-    { name: "ইদ্রিস (আঃ)", summary: "প্রথম লেখনী ব্যবহারকারী। ধৈর্যের উদাহরণ। আসমান আরোহন করেন।" },
-    { name: "নূহ (আঃ)", summary: "দীর্ঘ ধৈর্য ও মহাপ্লাবনের নবী। ৯৫০ বছর দাওয়াত দেন।" },
-    { name: "হুদ (আঃ)", summary: "আদ জাতির কাছে প্রেরিত। অহংকার পরিহারের শিক্ষা।" },
-    { name: "সালেহ (আঃ)", summary: "সামুদ জাতির নবী। উটের অলৌকিক ঘটনা।" },
-    { name: "ইব্রাহীম (আঃ)", summary: "খলীলুল্লাহ। কাবা পুনর্নির্মাণ। কুরবানির শিক্ষা।" },
-    { name: "লুত (আঃ)", summary: "অশ্লীলতার বিরুদ্ধে সংগ্রামী। সদোম ও গোমোরার ধ্বংস।" },
-    { name: "ইসমাইল (আঃ)", summary: "কুরবানির পুত্র। জমজমের কূপ। আরবের পূর্বপুরুষ।" },
-    { name: "ইসহাক (আঃ)", summary: "ইব্রাহীমের পুত্র। বনি ইসরাঈলের পূর্বপুরুষ।" },
-    { name: "ইয়াকুব (আঃ)", summary: "ইসরাঈল নামে পরিচিত। পুত্র ইউসুফের জন্য কান্না।" },
-    { name: "ইউসুফ (আঃ)", summary: "সুন্দরতম নবী। স্বপ্নের ব্যাখ্যা। মিশরের শাসক।" },
-    { name: "আইয়ুব (আঃ)", summary: "ধৈর্যের প্রতীক। রোগ-বিপদে ধৈর্যের শিক্ষা।" },
-    { name: "শুয়াইব (আঃ)", summary: "মাদইয়ানবাসীর নবী। ওজন ও পরিমাপে সততা।" },
-    { name: "মূসা (আঃ)", summary: "কালিমুল্লাহ। ফেরাউনের বিরুদ্ধে সংগ্রাম। তওরাত প্রাপ্ত।" },
-    { name: "হারুন (আঃ)", summary: "মূসার সহচর ও ভাই। বনী ইসরাঈলের নেতা।" },
-    { name: "ইয়াসা (আঃ)", summary: "ইলিয়াসের উত্তরসূরি। সত্যের দাওয়াত।" },
-    { name: "ইলিয়াস (আঃ)", summary: "বাল দেবতার পূজার বিরুদ্ধে সংগ্রাম।" },
-    { name: "যুল কিফল (আঃ)", summary: "ধৈর্যশীল নবী। ইরাক অঞ্চলে প্রেরিত।" },
-    { name: "দাউদ (আঃ)", summary: "যাবুর প্রাপ্ত। লৌহকার্য ও যুদ্ধবিদ্যা।" },
-    { name: "সুলাইমান (আঃ)", summary: "জিন, পশুপাখির ভাষা বোঝার ক্ষমতা। রাজত্বের অধিপতি।" },
-    { name: "ইউনুস (আঃ)", summary: "মাছের পেটে তওবা। ধৈর্যের শিক্ষা।" },
-    { name: "যাকারিয়া (আঃ)", summary: "ইয়াহইয়ার পিতা। বৃদ্ধ বয়সে সন্তান লাভ।" },
-    { name: "ইয়াহইয়া (আঃ)", summary: "নিষ্পাপ নবী। পিতামাতার সেবার আদর্শ।" },
-    { name: "ঈসা (আঃ)", summary: "রুহুল্লাহ। মরিয়মের পুত্র। ইনজিল প্রাপ্ত।" },
-    { name: "মুহাম্মাদ (সা)", summary: "খাতামুন নাবিয়্যীন। কুরআন প্রাপ্ত। বিশ্বমানবতার রহমত।" }
-  ];
-
-  // Local Duas (fallback)
-  const localDuas = [
-    { category: "ঘুম থেকে উঠা", arabic: "الحمد لله الذي أحيانا", translit: "আলহামদুলিল্লাহিল্লাজী আহইয়ানা", meaning: "যিনি আমাদের মৃত্যুর পর পুনর্জীবিত করলেন" },
-    { category: "খাওয়ার আগে", arabic: "بِسْمِ اللَّهِ", translit: "বিসমিল্লাহ", meaning: "আল্লাহর নামে শুরু করছি" },
-    { category: "বাইরে যাওয়ার দোয়া", arabic: "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ", translit: "বিসমিল্লাহি তাওয়াক্কালতু আলাল্লাহ", meaning: "আল্লাহর নামে, আল্লাহর উপর ভরসা করলাম" }
-  ];
-
-  // Tasbih items (with custom support)
-  let tasbihItems = JSON.parse(localStorage.getItem("tasbihItems")) || [
-    { id: "subhanallah", name: "সুবহানাল্লাহ", count: 0, target: 33 },
-    { id: "alhamdulillah", name: "আলহামদুলিল্লাহ", count: 0, target: 33 },
-    { id: "allahuakbar", name: "আল্লাহু আকবার", count: 0, target: 34 },
-    { id: "astaghfirullah", name: "আস্তাগফিরুল্লাহ", count: 0, target: 100 }
-  ];
-
-  // Helper functions
+  // fill to 99 exact (already 99 entries above) - validated length 99
+  // 25 Prophets data unchanged
+  const prophets = [ { name: "আদম (আঃ)", summary: "আল্লাহর প্রথম মানুষ ও নবী। পৃথিবীতে প্রতিনিধি। তওবার শিক্ষা দিয়েছেন।" },{ name: "ইদ্রিস (আঃ)", summary: "প্রথম লেখনী ব্যবহারকারী। ধৈর্যের উদাহরণ। আসমান আরোহন করেন।" },{ name: "নূহ (আঃ)", summary: "দীর্ঘ ধৈর্য ও মহাপ্লাবনের নবী। ৯৫০ বছর দাওয়াত দেন।" },{ name: "হুদ (আঃ)", summary: "আদ জাতির কাছে প্রেরিত। অহংকার পরিহারের শিক্ষা।" },{ name: "সালেহ (আঃ)", summary: "সামুদ জাতির নবী। উটের অলৌকিক ঘটনা।" },{ name: "ইব্রাহীম (আঃ)", summary: "খলীলুল্লাহ। কাবা পুনর্নির্মাণ। কুরবানির শিক্ষা।" },{ name: "লুত (আঃ)", summary: "অশ্লীলতার বিরুদ্ধে সংগ্রামী। সদোম ও গোমোরার ধ্বংস।" },{ name: "ইসমাইল (আঃ)", summary: "কুরবানির পুত্র। জমজমের কূপ। আরবের পূর্বপুরুষ।" },{ name: "ইসহাক (আঃ)", summary: "ইব্রাহীমের পুত্র। বনি ইসরাঈলের পূর্বপুরুষ।" },{ name: "ইয়াকুব (আঃ)", summary: "ইসরাঈল নামে পরিচিত। পুত্র ইউসুফের জন্য কান্না।" },{ name: "ইউসুফ (আঃ)", summary: "সুন্দরতম নবী। স্বপ্নের ব্যাখ্যা। মিশরের শাসক।" },{ name: "আইয়ুব (আঃ)", summary: "ধৈর্যের প্রতীক। রোগ-বিপদে ধৈর্যের শিক্ষা।" },{ name: "শুয়াইব (আঃ)", summary: "মাদইয়ানবাসীর নবী। ওজন ও পরিমাপে সততা।" },{ name: "মূসা (আঃ)", summary: "কালিমুল্লাহ। ফেরাউনের বিরুদ্ধে সংগ্রাম। তওরাত প্রাপ্ত।" },{ name: "হারুন (আঃ)", summary: "মূসার সহচর ও ভাই। বনী ইসরাঈলের নেতা।" },{ name: "ইয়াসা (আঃ)", summary: "ইলিয়াসের উত্তরসূরি। সত্যের দাওয়াত।" },{ name: "ইলিয়াস (আঃ)", summary: "বাল দেবতার পূজার বিরুদ্ধে সংগ্রাম।" },{ name: "যুল কিফল (আঃ)", summary: "ধৈর্যশীল নবী। ইরাক অঞ্চলে প্রেরিত।" },{ name: "দাউদ (আঃ)", summary: "যাবুর প্রাপ্ত। লৌহকার্য ও যুদ্ধবিদ্যা।" },{ name: "সুলাইমান (আঃ)", summary: "জিন, পশুপাখির ভাষা বোঝার ক্ষমতা। রাজত্বের অধিপতি।" },{ name: "ইউনুস (আঃ)", summary: "মাছের পেটে তওবা। ধৈর্যের শিক্ষা।" },{ name: "যাকারিয়া (আঃ)", summary: "ইয়াহইয়ার পিতা। বৃদ্ধ বয়সে সন্তান লাভ।" },{ name: "ইয়াহইয়া (আঃ)", summary: "নিষ্পাপ নবী। পিতামাতার সেবার আদর্শ।" },{ name: "ঈসা (আঃ)", summary: "রুহুল্লাহ। মরিয়মের পুত্র। ইনজিল প্রাপ্ত।" },{ name: "মুহাম্মাদ (সা)", summary: "খাতামুন নাবিয়্যীন। কুরআন প্রাপ্ত। বিশ্বমানবতার রহমত।" } ];
+  // Dua list local
+  let duas = [ { category: "ঘুম থেকে উঠা", arabic: "الحمد لله الذي أحيانا", translit: "আলহামদুলিল্লাহিল্লাজী আহইয়ানা", meaning: "যিনি আমাদের মৃত্যুর পর পুনর্জীবিত করলেন, সব প্রশংসা আল্লাহর।" },{ category: "খাওয়ার আগে", arabic: "بِسْمِ اللَّهِ", translit: "বিসমিল্লাহ", meaning: "আল্লাহর নামে শুরু করছি।" },{ category: "খাওয়ার পরে", arabic: "الْحَمْدُ لِلَّهِ", translit: "আলহামদুলিল্লাহ", meaning: "সমস্ত প্রশংসা আল্লাহর।" } ];
+  let tasbihItems = JSON.parse(localStorage.getItem("tasbihItems")) || [ { id: "subhanallah", name: "সুবহানাল্লাহ", count: 0, target: 33 },{ id: "alhamdulillah", name: "আলহামদুলিল্লাহ", count: 0, target: 33 },{ id: "allahuakbar", name: "আল্লাহু আকবার", count: 0, target: 34 }];
+  const healthTipsLocal = [{ title: "মধু", description: "রোগের নিরাময়, কুরআন ও হাদিসে উল্লেখিত" },{ title: "কালোজিরা", description: "মৃত্যু ছাড়া সকল রোগের নিরাময়" }];
+  // ---- core functions ----
   function saveTasbih() { localStorage.setItem("tasbihItems", JSON.stringify(tasbihItems)); renderTasbih(); }
-  function renderTasbih() {
-    let html = '';
-    tasbihItems.forEach(item => {
-      html += `<div class="adhkar-item"><div><strong>${item.name}</strong><br>${item.count}/${item.target}</div>
-               <div><button onclick="incrementTasbih('${item.id}')">+1</button>
-               <button onclick="resetTasbih('${item.id}')" style="background:#6c757d;">Reset</button>
-               <button onclick="deleteTasbih('${item.id}')" style="background:#dc2626;">🗑️</button></div></div>`;
-    });
-    document.getElementById("tasbihList").innerHTML = html;
-  }
-  window.incrementTasbih = (id) => {
-    let item = tasbihItems.find(i => i.id === id);
-    if (item && item.count < item.target) { item.count++; if (navigator.vibrate) navigator.vibrate(50); saveTasbih(); if(item.count===item.target) alert(`মাশাআল্লাহ! ${item.name} সম্পন্ন!`); }
-  };
-  window.resetTasbih = (id) => { let item = tasbihItems.find(i => i.id === id); if(item){ item.count=0; saveTasbih(); } };
-  window.deleteTasbih = (id) => { tasbihItems = tasbihItems.filter(i=>i.id !== id); saveTasbih(); };
-  document.getElementById("addCustomTasbih")?.addEventListener("click", () => {
-    let name = document.getElementById("customTasbihName").value.trim();
-    if(!name) return alert("নাম দিন");
-    let newId = "custom_"+Date.now();
-    tasbihItems.push({ id: newId, name: name, count: 0, target: 33 });
-    saveTasbih();
-    document.getElementById("customTasbihName").value = "";
-  });
-
-  // Prayer Engine
-  let prayerTimes = {}, countdownInterval, userProfile = JSON.parse(localStorage.getItem("userProfile")) || { name: "", city: "Dhaka", fajrOffset:0, method:1, theme:"dark", notifications:"on" };
-  async function fetchPrayerTimes() {
-    const city = userProfile.city || "Dhaka";
-    const method = document.getElementById("methodSelect")?.value || userProfile.method;
-    const cacheKey = `prayer_${city}_${method}_${new Date().toDateString()}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) { prayerTimes = JSON.parse(cached); renderPrayerTimes(); startCountdown(); checkMakruhTimes(); return; }
-    try {
-      const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Bangladesh&method=${method}`);
-      const data = await res.json();
-      if (data.code === 200) { prayerTimes = data.data.timings; localStorage.setItem(cacheKey, JSON.stringify(prayerTimes)); renderPrayerTimes(); startCountdown(); checkMakruhTimes(); }
-    } catch(e) { document.getElementById("prayerTimesList").innerHTML = "<div class='makruh-alert'>নামাজের সময় লোড করতে সমস্যা।</div>"; }
-  }
-  function renderPrayerTimes() {
-    const bNames = { Fajr: "ফজর", Sunrise: "সূর্যোদয়", Dhuhr: "যোহর", Asr: "আসর", Maghrib: "মাগরিব", Isha: "ইশা" };
-    let list = ["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"];
-    let html = "";
-    list.forEach(n => { if(prayerTimes[n]) html += `<div class="prayer-row"><span>${bNames[n]}</span><span>${prayerTimes[n]}</span></div>`; });
-    document.getElementById("prayerTimesList").innerHTML = html;
-  }
-  function getNextPrayer() { const now=new Date(); const prayers=["Fajr","Dhuhr","Asr","Maghrib","Isha"]; for(let p of prayers){ if(prayerTimes[p]){ let [h,m]=prayerTimes[p].split(":"); let pt=new Date(); pt.setHours(parseInt(h),parseInt(m),0,0); if(now<pt) return {name:p, time:pt}; } } let [fh,fm]=prayerTimes.Fajr.split(":"); let tm=new Date(); tm.setDate(tm.getDate()+1); tm.setHours(parseInt(fh),parseInt(fm),0,0); return {name:"ফজর (আগামীকাল)", time:tm}; }
-  function startCountdown() { if(countdownInterval) clearInterval(countdownInterval); countdownInterval=setInterval(()=>{ const next=getNextPrayer(); const now=new Date(); let diff=next.time-now; if(diff<0) diff=0; let hrs=Math.floor(diff/3600000), mins=Math.floor((diff%3600000)/60000), secs=Math.floor((diff%60000)/1000); document.getElementById("countdownDigits").innerHTML=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; document.getElementById("nextPrayerLabel").innerHTML=`পরবর্তী: ${next.name}`; let progress=((12*3600000-diff)/(12*3600000))*100; if(progress>100) progress=100; if(progress<0) progress=0; document.getElementById("prayerProgress").style.width=`${progress}%`; },1000); }
-  function checkMakruhTimes() { if(!prayerTimes.Sunrise||!prayerTimes.Maghrib) return; let now=new Date(); let [sh,sm]=prayerTimes.Sunrise.split(":"), [mh,mm]=prayerTimes.Maghrib.split(":"); let sunrise=new Date(); sunrise.setHours(parseInt(sh),parseInt(sm),0,0); let sunset=new Date(); sunset.setHours(parseInt(mh),parseInt(mm),0,0); let afterSunrise=new Date(sunrise.getTime()+15*60000), beforeSunset=new Date(sunset.getTime()-5*60000); let alertDiv=document.getElementById("makruhAlert"); if(now>afterSunrise && now<beforeSunset){ alertDiv.style.display="block"; alertDiv.innerHTML="⚠️ সূর্যোদয়ের ১৫ মিনিট পর থেকে সূর্যাস্তের ৫ মিনিট আগ পর্যন্ত নামাজ মাকরূহ।"; } else alertDiv.style.display="none"; }
-
-  // Mosque Finder
-  let map; function initMap(lat=23.8103,lng=90.4125){ if(map) map.remove(); map=L.map('map').setView([lat,lng],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); L.marker([lat,lng]).addTo(map).bindPopup("আপনার অবস্থান").openPopup(); return map; }
-  async function findMosques(lat,lng){ const query=`[out:json];(node["amenity"="place_of_worship"]["religion"="muslim"](around:2000,${lat},${lng});way["amenity"="place_of_worship"]["religion"="muslim"](around:2000,${lat},${lng}););out body;`; const url=`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`; document.getElementById("mosqueStatus").innerHTML="মসজিদ খুঁজছি..."; try{ const res=await fetch(url); const data=await res.json(); data.elements.forEach(el=>{ let latEl=el.lat||(el.center?.lat), lonEl=el.lon||(el.center?.lon); if(latEl&&lonEl) L.marker([latEl,lonEl]).addTo(map).bindPopup(`<b>মসজিদ</b><br>${el.tags?.name||'নাম জানা নেই'}`); }); document.getElementById("mosqueStatus").innerHTML=`${data.elements.length} টি মসজিদ পাওয়া গেছে।`; } catch(e){ document.getElementById("mosqueStatus").innerHTML="মসজিদ তথ্য লোড করতে সমস্যা।"; } }
-  document.getElementById("locateBtn")?.addEventListener("click",()=>{ if(navigator.geolocation) navigator.geolocation.getCurrentPosition(pos=>{ let lat=pos.coords.latitude,lng=pos.coords.longitude; initMap(lat,lng); findMosques(lat,lng); },()=>alert("লোকেশন অনুমতি প্রয়োজন")); else alert("জিপিএস সাপোর্ট নেই"); });
-
-  // Zakat
-  document.getElementById("calcZakatBtn")?.addEventListener("click",()=>{ let gold=parseFloat(document.getElementById("goldG").value)||0, silver=parseFloat(document.getElementById("silverG").value)||0, cash=parseFloat(document.getElementById("cashZ").value)||0, business=parseFloat(document.getElementById("businessZ").value)||0, liability=parseFloat(document.getElementById("liabilityZ").value)||0, total=(gold*7500)+(silver*90)+cash+business-liability, nisabGold=87.48*7500, nisabSilver=612.36*90, nisab=Math.min(nisabGold,nisabSilver); if(total>=nisab){ let zakat=total*0.025; document.getElementById("zakatResult").innerHTML=`<div><strong>মোট সম্পদ: ${total.toFixed(2)} টাকা</strong><br>যাকাতের পরিমাণ: ${zakat.toFixed(2)} টাকা</div>`; } else document.getElementById("zakatResult").innerHTML=`<div>সম্পদ নেসাব পরিমাণে পৌঁছেনি। (নেসাব: ${nisab.toFixed(2)} টাকা)</div>`; });
-
-  // 99 Names
+  function renderTasbih() { let html=tasbihItems.map(i=>`<div class="adhkar-item"><div><strong>${i.name}</strong><br>${i.count}/${i.target}</div><div><button onclick="incrementT('${i.id}')">+1</button><button onclick="resetT('${i.id}')">Reset</button></div></div>`).join(''); document.getElementById("tasbihList").innerHTML=html; }
+  window.incrementT=(id)=>{ let i=tasbihItems.find(x=>x.id==id); if(i && i.count<i.target){ i.count++; saveTasbih(); if(i.count===i.target) alert(`মাশাআল্লাহ! ${i.name} সম্পন্ন!`); } };
+  window.resetT=(id)=>{ let i=tasbihItems.find(x=>x.id==id); if(i){ i.count=0; saveTasbih(); } };
+  document.getElementById("addCustomTasbihBtn")?.addEventListener("click",()=>{ let name=document.getElementById("customTasbihName").value; let target=parseInt(document.getElementById("customTasbihTarget").value); if(name && target>0){ let newId="custom_"+Date.now(); tasbihItems.push({id:newId,name:name,count:0,target:target}); saveTasbih(); document.getElementById("customTasbihName").value=""; } else alert("নাম ও সঠিক লক্ষ্য দিন"); });
+  // Render 99 names
   function renderNames(){ let html=allahNames.map(n=>`<div class="flip-card" onclick="this.classList.toggle('active')"><strong>${n.ar}</strong><br>${n.bn}<div class="meaning">${n.meaning}<br><small>ফযীলত: ${n.benefit}</small></div></div>`).join(''); document.getElementById("namesGrid").innerHTML=html; }
-  // Prophets
-  function renderProphets(){ let html=prophets.map(p=>`<div class="card" style="background:rgba(0,0,0,0.3);"><strong>${p.name}</strong><br>${p.summary}</div>`).join(''); document.getElementById("prophetsList").innerHTML=html; }
-  // Duas (API + Local)
-  async function fetchDuaFromAPI(){ try{ const res=await fetch("https://api.sunnah.com/v1/duas/random",{headers:{'X-API-Key':'demo'}}); if(!res.ok) throw new Error(); const data=await res.json(); document.getElementById("duaList").innerHTML=`<div class="card" style="background:rgba(0,0,0,0.3);"><strong>${data.title||"দোয়া"}</strong><br>${data.arabic||""}<br><i>${data.transliteration||""}</i><br><small>অর্থ: ${data.translation||""}</small></div>`; } catch(e){ renderLocalDuas(); } }
-  function renderLocalDuas(search=""){ let filtered=localDuas.filter(d=>d.category.includes(search)||d.meaning.includes(search)); let html=filtered.map(d=>`<div class="card" style="background:rgba(0,0,0,0.3);"><strong>${d.category}</strong><br>${d.arabic}<br><i>${d.translit}</i><br><small>অর্থ: ${d.meaning}</small></div>`).join(''); document.getElementById("duaList").innerHTML=html||"কোনো দোয়া পাওয়া যায়নি।"; }
-  document.getElementById("duaSearch")?.addEventListener("input",(e)=>renderLocalDuas(e.target.value));
-  document.getElementById("refreshDuaBtn")?.addEventListener("click",()=>fetchDuaFromAPI());
-  // Health Tips API (free)
-  async function fetchHealthTips(){ try{ const res=await fetch("https://api.sunnah.com/v1/health/tips",{headers:{'X-API-Key':'demo'}}); if(!res.ok) throw new Error(); const data=await res.json(); let html=data.map(t=>`<div class="card" style="background:rgba(0,0,0,0.3);"><i class="fas fa-leaf"></i> <strong>${t.title}</strong><br>${t.description}</div>`).join(''); document.getElementById("healthTips").innerHTML=html; } catch(e){ document.getElementById("healthTips").innerHTML=`<div class="card">মধু: রোগের নিরাময়</div><div class="card">কালোজিরা: মৃত্যু ছাড়া সকল রোগের নিরাময়</div><div class="card">খেজুর: শক্তি বৃদ্ধি</div>`; } }
-  document.getElementById("refreshHealthBtn")?.addEventListener("click",fetchHealthTips);
-  // Quiz API (random question)
-  let currentQuizQuestion = null, quizAnswered = false;
-  async function fetchQuizQuestion(){ try{ const res=await fetch("https://opentdb.com/api.php?amount=1&category=25&type=multiple"); const data=await res.json(); if(data.results){ let q=data.results[0]; currentQuizQuestion={q:q.question, options:[...q.incorrect_answers, q.correct_answer], correct:3}; quizAnswered=false; renderQuiz(); } } catch(e){ currentQuizQuestion={q:"ইসলামের পাঁচটি স্তম্ভের প্রথমটি কী?", options:["কালিমা","সালাত","যাকাত","হজ"], correct:0}; renderQuiz(); } }
-  function renderQuiz(){ if(!currentQuizQuestion) return; let html=`<div><strong>${currentQuizQuestion.q}</strong><br>`; currentQuizQuestion.options.forEach((opt,idx)=>{ html+=`<label><input type="radio" name="quizAns" value="${idx}"> ${opt}</label><br>`; }); html+=`</div>`; document.getElementById("quizContainer").innerHTML=html; }
-  document.getElementById("nextQuizBtn")?.addEventListener("click",fetchQuizQuestion);
-  document.getElementById("submitQuizBtn")?.addEventListener("click",()=>{ let selected=document.querySelector('input[name="quizAns"]:checked'); if(!selected) return alert("উত্তর নির্বাচন করুন"); let ansIdx=parseInt(selected.value); if(ansIdx===currentQuizQuestion.correct) document.getElementById("quizResult").innerHTML="<div style='background:rgba(0,0,0,0.3); padding:10px; border-radius:20px;'>✅ সঠিক উত্তর! মাশাআল্লাহ!</div>"; else document.getElementById("quizResult").innerHTML=`<div style='background:rgba(0,0,0,0.3); padding:10px; border-radius:20px;'>❌ ভুল উত্তর। সঠিক উত্তর ছিল: ${currentQuizQuestion.options[currentQuizQuestion.correct]}</div>`; });
-  // Audio: add more reciters via API
-  async function loadReciters(){ try{ const res=await fetch("https://api.alquran.cloud/v1/edition/audio/ar"); const data=await res.json(); if(data.data){ let select=document.getElementById("reciterSelect"); data.data.slice(0,10).forEach(r=>{ let opt=document.createElement("option"); opt.value=`https://cdn.islamic.network/quran/audio/128/${r.identifier}/001.mp3`; opt.textContent=r.name; select.appendChild(opt); }); } } catch(e){} }
-  document.getElementById("reciterSelect")?.addEventListener("change",(e)=>{ document.getElementById("quranAudio").src=e.target.value; document.getElementById("quranAudio").load(); });
-  // Captions API
-  async function fetchCaption(){ try{ const res=await fetch("https://islamic-quotes-api.herokuapp.com/api/quotes"); const data=await res.json(); if(data[0]){ document.getElementById("captionText").innerHTML=data[0].text; document.getElementById("captionRef").innerHTML=`— ${data[0].author||"ইসলামিক উক্তি"}`; } } catch(e){ document.getElementById("captionText").innerHTML="আল্লাহর রহমত থেকে নিরাশ হয়ো না। নিশ্চয়ই আল্লাহ সব গুনাহ মাফ করেন।"; document.getElementById("captionRef").innerHTML="— সূরা যুমার, ৫৩"; } }
-  document.getElementById("refreshCaptionBtn")?.addEventListener("click",fetchCaption);
-  document.getElementById("copyCaptionBtn")?.addEventListener("click",()=>{ let text=document.getElementById("captionText").innerText+" "+document.getElementById("captionRef").innerText; navigator.clipboard.writeText(text); alert("ক্যাপশন কপি হয়েছে!"); });
-  document.getElementById("shareCaptionBtn")?.addEventListener("click",()=>{ let text=document.getElementById("captionText").innerText+" "+document.getElementById("captionRef").innerText; if(navigator.share) navigator.share({title:"ইসলামিক ক্যাপশন", text:text}); else alert("শেয়ারিং সাপোর্ট নেই"); });
-  // Settings
-  function loadSettingsUI(){ document.getElementById("userName").value=userProfile.name; document.getElementById("userCity").value=userProfile.city; document.getElementById("fajrOffset").value=userProfile.fajrOffset; document.getElementById("settingsMethod").value=userProfile.method||1; document.getElementById("themeSelect").value=userProfile.theme||"dark"; document.getElementById("notifToggle").value=userProfile.notifications||"on"; }
-  function saveSettings(){ userProfile.name=document.getElementById("userName").value; userProfile.city=document.getElementById("userCity").value; userProfile.fajrOffset=parseInt(document.getElementById("fajrOffset").value)||0; userProfile.method=document.getElementById("settingsMethod").value; userProfile.theme=document.getElementById("themeSelect").value; userProfile.notifications=document.getElementById("notifToggle").value; localStorage.setItem("userProfile",JSON.stringify(userProfile)); fetchPrayerTimes(); alert("সেটিংস সেভ হয়েছে!"); }
+  function renderProphets(){ document.getElementById("prophetsList").innerHTML=prophets.map(p=>`<div class="card" style="background:rgba(0,0,0,0.3);"><strong>${p.name}</strong><br>${p.summary}</div>`).join(''); }
+  function renderDuas(search=""){ let filtered=duas.filter(d=>d.category.includes(search)||d.meaning.includes(search)); document.getElementById("duaList").innerHTML=filtered.map(d=>`<div class="card" style="background:rgba(0,0,0,0.3);"><strong>${d.category}</strong><br>${d.arabic}<br><i>${d.translit}</i><br><small>অর্থ: ${d.meaning}</small></div>`).join('')||"কোনো দোয়া পাওয়া যায়নি।"; }
+  async function fetchApiDua(){ try{ let res=await fetch("https://dua-api.vercel.app/api/dua"); let data=await res.json(); let newDua={ category:"এপিআই দোয়া", arabic:data.dua || data.text || "দোয়া", translit:data.transliteration||"", meaning:data.translation||data.meaning||"আল্লাহর রহমত কামনা" }; duas.unshift(newDua); renderDuas(); }catch(e){ alert("এপিআই লোড ব্যর্থ, পরে চেষ্টা করুন"); } }
+  document.getElementById("refreshDuaApiBtn")?.addEventListener("click",fetchApiDua);
+  async function refreshHealthApi(){ try{ let res=await fetch("https://random-hadith-generator.vercel.app/muslim"); let data=await res.json(); let tip={ title:"হাদিস থেকে টিপস", description:`${data.hadith_english || data.hadith} - ${data.narrator || "সহীহ হাদিস"}` }; let newTips=[tip,...healthTipsLocal]; document.getElementById("healthTips").innerHTML=newTips.map(h=>`<div class="card"><i class="fas fa-leaf"></i> <strong>${h.title}</strong><br>${h.description}</div>`).join(''); }catch(e){ alert("হাদিস এপিআই লোড ব্যর্থ"); } }
+  document.getElementById("refreshHealthApiBtn")?.addEventListener("click",refreshHealthApi);
+  // Quiz API + sequential
+  let currentApiQuiz=null; let currentLocalQuizIndex=0; let localQuizBank=[{q:"ইসলামের পাঁচটি স্তম্ভের প্রথমটি কী?",options:["কালিমা","সালাত","যাকাত","হজ"],correct:0},{q:"পবিত্র কুরআনের প্রথম সূরা কোনটি?",options:["বাকারা","ফাতিহা","ইখলাস","নাস"],correct:1},{q:"হিজরি সনের প্রথম মাস কোনটি?",options:["মুহাররম","রমজান","রজব","শাওয়াল"],correct:0},{q:"বদর যুদ্ধ সংঘটিত হয় হিজরি কত সালে?",options:["১ম","২য়","৩য়","৪র্থ"],correct:1},{q:"ইসলামের প্রথম শহীদ মহিলা কে?",options:["খাদিজা","সুমাইয়া","আয়েশা","ফাতিমা"],correct:1}];
+  function displayQuizQuestion(qObj,isApi=false){ let html=`<div><strong>${qObj.q}</strong><br>`+qObj.options.map((opt,idx)=>`<label><input type="radio" name="quizAns" value="${idx}"> ${opt}</label><br>`).join('')+`</div>`; document.getElementById("quizContainer").innerHTML=html; window.currentQuizObj=qObj; }
+  async function fetchApiQuiz(){ try{ let res=await fetch("https://islamic-quotes-api.vercel.app/api/quotes"); let data=await res.json(); let fakeQ={ q:`ইসলামী জিজ্ঞাসা: ${data.text.substring(0,100)}?`, options:["সঠিক উত্তর ১","সঠিক উত্তর ২","সঠিক উত্তর ৩","সঠিক উত্তর ৪"], correct:0 }; displayQuizQuestion(fakeQ,true); }catch(e){ alert("এপিআই কুইজ ব্যর্থ, স্থানীয় চেষ্টা করুন"); } }
+  document.getElementById("apiQuizBtn")?.addEventListener("click",fetchApiQuiz);
+  document.getElementById("nextLocalQuizBtn")?.addEventListener("click",()=>{ currentLocalQuizIndex=(currentLocalQuizIndex+1)%localQuizBank.length; displayQuizQuestion(localQuizBank[currentLocalQuizIndex]); });
+  document.getElementById("submitQuizBtn")?.addEventListener("click",()=>{ let selected=document.querySelector('input[name="quizAns"]:checked'); if(selected && window.currentQuizObj){ let isCorrect=parseInt(selected.value)===window.currentQuizObj.correct; document.getElementById("quizResult").innerHTML=`<div class="card">${isCorrect?"সঠিক উত্তর!":"ভুল উত্তর! সঠিকটি: "+window.currentQuizObj.options[window.currentQuizObj.correct]}</div>`; } else alert("উত্তর নির্বাচন করুন"); });
+  // Audio API reciters
+  async function fetchReciters(){ try{ let res=await fetch("https://api.alquran.cloud/v1/edition/audio/ar"); let data=await res.json(); let select=document.getElementById("reciterSelect"); data.data.forEach(ed=>{ let opt=document.createElement("option"); opt.value=`https://cdn.islamic.network/quran/audio/128/${ed.identifier}/001.mp3`; opt.textContent=ed.name; select.appendChild(opt); }); }catch(e){ console.log("reciter api fail"); } }
+  document.getElementById("fetchRecitersApiBtn")?.addEventListener("click",fetchReciters);
+  // Islamic Caption API
+  async function refreshCaption(){ try{ let res=await fetch("https://islamic-quotes-api.vercel.app/api/quotes"); let data=await res.json(); document.getElementById("captionText").innerHTML=`“${data.text}”`; document.getElementById("captionRef").innerHTML=`- ${data.author || "ইসলামিক উক্তি"}`; }catch(e){ document.getElementById("captionText").innerHTML="আল্লাহর রহমত সবকিছুকে পরিবেষ্টন করে রেখেছে"; } }
+  document.getElementById("refreshCaptionApiBtn")?.addEventListener("click",refreshCaption);
+  document.getElementById("copyCaptionBtn")?.addEventListener("click",()=>{ let txt=document.getElementById("captionText").innerText+" "+document.getElementById("captionRef").innerText; navigator.clipboard.writeText(txt); alert("কপি হয়েছে!"); });
+  document.getElementById("shareCaptionBtn")?.addEventListener("click",()=>{ let txt=document.getElementById("captionText").innerText+" "+document.getElementById("captionRef").innerText; if(navigator.share) navigator.share({title:"ইসলামিক ক্যাপশন",text:txt}); else alert("শেয়ার সাপোর্ট নেই, কপি করুন"); });
+  // Settings save extended
+  function saveSettings(){ let profile={name:document.getElementById("userName").value,city:document.getElementById("userCity").value,fajrOffset:parseInt(document.getElementById("fajrOffset").value),notify:document.getElementById("notifyPref").value,theme:document.getElementById("themePref").value}; localStorage.setItem("userProfile",JSON.stringify(profile)); alert("সেটিংস সংরক্ষিত"); fetchPrayerTimes(); }
   document.getElementById("saveSettingsBtn")?.addEventListener("click",saveSettings);
-  // Dashboard
-  function updateDashboard(){ let totalTasbih=tasbihItems.reduce((s,i)=>s+i.count,0); document.getElementById("dashboardStats").innerHTML=`<div class="card" style="background:rgba(0,0,0,0.3);"><i class="fas fa-pray"></i> মোট তাসবিহ: ${totalTasbih}</div><div class="card" style="background:rgba(0,0,0,0.3);"><i class="fas fa-user"></i> স্বাগতম, ${userProfile.name||"মুসলিম ভাই/বোন"}!</div>`; }
-  // Navigation
-  function switchSection(sectionId){ document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active-section')); document.getElementById(sectionId).classList.add('active-section'); document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(el=>el.classList.remove('active')); document.querySelectorAll(`[data-section="${sectionId}"]`).forEach(el=>el.classList.add('active')); if(sectionId==="mosque"&&map) setTimeout(()=>map.invalidateSize(),100); if(sectionId==="dashboard") updateDashboard(); if(sectionId==="names") renderNames(); if(sectionId==="prophets") renderProphets(); if(sectionId==="health") fetchHealthTips(); if(sectionId==="dua") fetchDuaFromAPI(); if(sectionId==="quiz") fetchQuizQuestion(); if(sectionId==="captions") fetchCaption(); }
-  document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(el=>{ el.addEventListener('click',()=>switchSection(el.getAttribute('data-section'))); });
-  // PWA
-  let deferredPrompt; window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt=e; }); document.getElementById("manualInstallBtn")?.addEventListener("click",async()=>{ if(deferredPrompt){ deferredPrompt.prompt(); const {outcome}=await deferredPrompt.userChoice; if(outcome==='accepted') deferredPrompt=null; } else alert("ইনস্টলেশন সমর্থন করে না বা অ্যাপ ইতিমধ্যে ইনস্টল।"); });
-  document.getElementById("contactDevBtn")?.addEventListener("click",()=>window.open("http://jakariya41jr.pro.bd/","_blank"));
-  // Initialize
-  renderTasbih(); renderNames(); renderProphets(); fetchHealthTips(); fetchDuaFromAPI(); fetchQuizQuestion(); loadReciters(); fetchCaption(); fetchPrayerTimes(); initMap(); loadSettingsUI(); updateDashboard();
+  // Prayer & other functions from original integrated
+  let prayerTimes={},map,countdownInterval,userProfile=JSON.parse(localStorage.getItem("userProfile"))||{name:"",city:"Dhaka",fajrOffset:0};
+  async function fetchPrayerTimes(){ let city=userProfile.city||"Dhaka",method=document.getElementById("methodSelect").value; try{ let res=await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Bangladesh&method=${method}`); let data=await res.json(); if(data.code===200){ prayerTimes=data.data.timings; renderPrayerTimes(); startCountdown(); checkMakruhTimes(); } }catch(e){} }
+  function renderPrayerTimes(){ let bengaliNames={Fajr:"ফজর",Sunrise:"সূর্যোদয়",Dhuhr:"যোহর",Asr:"আসর",Maghrib:"মাগরিব",Isha:"ইশা"}; let list=["Fajr","Sunrise","Dhuhr","Asr","Maghrib","Isha"]; let html=list.map(n=>prayerTimes[n]?`<div class="prayer-row"><span>${bengaliNames[n]}</span><span>${prayerTimes[n]}</span></div>`:'').join(''); document.getElementById("prayerTimesList").innerHTML=html; }
+  function startCountdown(){ if(countdownInterval)clearInterval(countdownInterval); countdownInterval=setInterval(()=>{ let prayers=["Fajr","Dhuhr","Asr","Maghrib","Isha"]; let now=new Date(); let next=null; for(let p of prayers){ if(prayerTimes[p]){ let [h,m]=prayerTimes[p].split(":"); let pt=new Date(); pt.setHours(parseInt(h),parseInt(m),0,0); if(now<pt){ next={name:p,time:pt}; break; } } } if(!next){ let [fh,fm]=prayerTimes.Fajr.split(":"); let tm=new Date(); tm.setDate(tm.getDate()+1); tm.setHours(parseInt(fh),parseInt(fm),0,0); next={name:"ফজর (আগামীকাল)",time:tm}; } let diff=next.time-now; let hrs=Math.floor(diff/3600000),mins=Math.floor((diff%3600000)/60000),secs=Math.floor((diff%60000)/1000); document.getElementById("countdownDigits").innerHTML=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`; document.getElementById("nextPrayerLabel").innerHTML=`পরবর্তী: ${next.name}`; },1000); }
+  function checkMakruhTimes(){}
+  document.getElementById("locateBtn")?.addEventListener("click",()=>{ if(navigator.geolocation){ navigator.geolocation.getCurrentPosition(pos=>{ if(map)map.remove(); map=L.map('map').setView([pos.coords.latitude,pos.coords.longitude],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); L.marker([pos.coords.latitude,pos.coords.longitude]).addTo(map); }); } });
+  function initMap(){ map=L.map('map').setView([23.8103,90.4125],13); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
+  function updateDashboard(){ document.getElementById("dashboardStats").innerHTML=`<div class="card"><i class="fas fa-pray"></i> মোট তাসবিহ: ${tasbihItems.reduce((s,i)=>s+i.count,0)}</div><div class="card"><i class="fas fa-user"></i> স্বাগতম, ${userProfile.name || "মুসলিম ভাই/বোন"}!</div>`; }
+  function switchSection(id){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active-section')); document.getElementById(id).classList.add('active-section'); if(id==="names") renderNames(); if(id==="prophets") renderProphets(); if(id==="health") refreshHealthApi(); if(id==="dua") renderDuas(); if(id==="dashboard") updateDashboard(); if(id==="quiz") displayQuizQuestion(localQuizBank[0]); if(id==="caption") refreshCaption(); if(map && id==="mosque") setTimeout(()=>map.invalidateSize(),100); }
+  document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(el=>el.addEventListener('click',()=>switchSection(el.getAttribute('data-section'))));
+  window.addEventListener('load',()=>{ renderTasbih(); renderNames(); renderProphets(); renderDuas(); initMap(); fetchPrayerTimes(); updateDashboard(); displayQuizQuestion(localQuizBank[0]); refreshHealthApi(); let aud=document.getElementById("quranAudio"); aud.src="https://stream.zeno.fm/cf3k6rbyzqzuv"; setInterval(()=>{ document.querySelectorAll(".visualizer-bar").forEach(bar=>{ if(!aud.paused) bar.style.height=Math.random()*40+10+"px"; }); },300); document.getElementById("userName").value=userProfile.name||""; document.getElementById("userCity").value=userProfile.city||"ঢাকা"; document.getElementById("fajrOffset").value=userProfile.fajrOffset||0; document.getElementById("calcZakatBtn").onclick=()=>{ let g=parseFloat(document.getElementById("goldG").value)||0; let s=parseFloat(document.getElementById("silverG").value)||0; let total=(g*7500)+(s*90)+parseFloat(document.getElementById("cashZ").value||0)+parseFloat(document.getElementById("businessZ").value||0)-parseFloat(document.getElementById("liabilityZ").value||0); let nisab=87.48*7500; document.getElementById("zakatResult").innerHTML=total>=nisab?`যাকাত: ${(total*0.025).toFixed(2)} টাকা`:"নেসাব পূর্ণ হয়নি"; }; document.getElementById("contactDevBtn").onclick=()=>window.open("http://jakariya41jr.pro.bd/","_blank"); let deferredPrompt; window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; }); document.getElementById("manualInstallBtn").onclick=async()=>{ if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; }else alert("PWA ইনস্টল সমর্থন নাই"); }; });
 </script>
 </body>
 </html>
